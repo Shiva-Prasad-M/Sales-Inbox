@@ -16,6 +16,11 @@ class Settings:
         ""
     )
 
+    GEMINI_MODEL: str = os.getenv(
+        "GEMINI_MODEL",
+        "gemini-2.0-flash"
+    )
+
     CANDIDATE_ID: str = os.getenv(
         "CANDIDATE_ID",
         ""
@@ -24,6 +29,11 @@ class Settings:
     FRONTEND_URL: str = os.getenv(
         "FRONTEND_URL",
         "http://localhost:5173"
+    )
+
+    BACKEND_URL: str = os.getenv(
+        "BACKEND_URL",
+        "http://localhost:8000"
     )
 
 

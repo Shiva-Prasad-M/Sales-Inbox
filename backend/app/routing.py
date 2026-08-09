@@ -332,15 +332,15 @@ def classify_deterministic(text: str, subject: str, thread_has_task: bool = Fals
                 "confidence": 0.85, "reason": "SMB demo/enquiry -> Rohit",
                 "deal_value_inr": deal_value}
 
-    if is_marketing:
-        return {"decision": "task", "category": "marketing",
-                "assignee_id": "u_meera", "priority": "low",
-                "confidence": 0.9, "reason": "Marketing/webinar/PR -> Meera"}
-
     if is_alliance:
         return {"decision": "task", "category": "alliances",
                 "assignee_id": "u_karan", "priority": "medium",
                 "confidence": 0.9, "reason": "Channel/alliance -> Karan"}
+
+    if is_marketing:
+        return {"decision": "task", "category": "marketing",
+                "assignee_id": "u_meera", "priority": "low",
+                "confidence": 0.9, "reason": "Marketing/webinar/PR -> Meera"}
 
     if is_finance:
         return {"decision": "task", "category": "finance",
@@ -369,7 +369,12 @@ class GeminiClient:
     def __init__(self):
         self._client = None
         self._key = (os.getenv("GEMINI_API_KEY") or "").strip()
-        self._configured = bool(self._key) and self._key != "your_gemini_api_key" and len(self._key) > 20
+        self._configured = (
+            bool(self._key)
+            and self._key != "your_gemini_api_key"
+            and self._key != "your_gemini_api_key_here"
+            and len(self._key) > 20
+        )
 
     @property
     def available(self) -> bool:
@@ -407,7 +412,7 @@ class GeminiClient:
         for attempt in range(3):
             try:
                 resp = client.models.generate_content(
-                    model="gemini-1.5-flash",
+                    model=settings.GEMINI_MODEL,
                     contents=prompt,
                     config={"temperature": 0.0},
                 )
@@ -433,7 +438,7 @@ class GeminiClient:
         )
         try:
             resp = client.models.generate_content(
-                model="gemini-1.5-flash",
+                model=settings.GEMINI_MODEL,
                 contents=prompt,
                 config={"temperature": 0.0},
             )

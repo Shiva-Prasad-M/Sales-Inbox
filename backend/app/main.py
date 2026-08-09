@@ -13,7 +13,7 @@ from app.schemas import (ASSIGNEE_IDS, CATEGORIES, PRIORITIES, ApiTaskOut,
                          IngestResponse, TaskCreate, TaskOut, TaskUpdate)
 from fastapi import Depends, FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy import func, text
+from sqlalchemy import func, inspect, text
 from sqlalchemy.orm import Session
 
 app = FastAPI(
@@ -44,9 +44,65 @@ def get_db():
 def startup():
     try:
         Base.metadata.create_all(bind=engine)
+        _sync_schema()
     except Exception as exc:
         # Do not crash if DB is temporarily down
         print(f"[startup] DB tables not ensured: {exc}")
+
+
+# Type map for SQLAlchemy -> Postgres column types used in ALTER TABLE
+_PG_TYPES = {
+    "INTEGER": "INTEGER",
+    "VARCHAR": "TEXT",
+    "TEXT": "TEXT",
+    "BOOLEAN": "BOOLEAN",
+    "FLOAT": "DOUBLE PRECISION",
+    "DATETIME": "TIMESTAMP WITH TIME ZONE",
+}
+
+
+def _sync_schema():
+    """Add any columns defined in the models that are missing from existing tables."""
+    inspector = inspect(engine)
+    for table in Base.metadata.sorted_tables:
+        if not inspector.has_table(table.name):
+            continue
+        existing = {col["name"] for col in inspector.get_columns(table.name)}
+        for column in table.columns:
+            if column.name in existing:
+                continue
+            base_type = str(column.type).split("(")[0].upper()
+            pg_type = _PG_TYPES.get(base_type, "TEXT")
+            nullable = "" if column.nullable else " NOT NULL"
+
+            # Only use a literal default when it is scalar, not a callable/lambda.
+            default = ""
+            if not column.nullable:
+                if base_type == "INTEGER":
+                    default = " DEFAULT 0"
+                elif base_type == "BOOLEAN":
+                    default = " DEFAULT false"
+                elif base_type == "FLOAT":
+                    default = " DEFAULT 0"
+                elif column.default is not None and not callable(column.default.arg):
+                    try:
+                        literal = column.default.arg
+                        if isinstance(literal, str):
+                            default = f" DEFAULT '{literal}'"
+                        else:
+                            default = f" DEFAULT {literal}"
+                    except Exception:
+                        default = ""
+
+            sql = f"ALTER TABLE {table.name} ADD COLUMN {column.name} {pg_type}{nullable}{default}"
+            # Run each ALTER in its own transaction so one failure doesn't abort the rest.
+            try:
+                with engine.begin() as conn:
+                    conn.execute(text(sql))
+                print(f"[schema] Added column {table.name}.{column.name}")
+            except Exception as exc:
+                print(f"[schema] Skipped {table.name}.{column.name}: {exc}")
+    print("[schema] Schema sync complete")
 
 
 # ---------------------------------------------------------------------------
