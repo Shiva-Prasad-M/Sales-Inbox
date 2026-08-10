@@ -28,12 +28,12 @@ class Settings:
 
     FRONTEND_URL: str = os.getenv(
         "FRONTEND_URL",
-        "http://localhost:5173"
+        ""
     )
 
     BACKEND_URL: str = os.getenv(
         "BACKEND_URL",
-        "http://localhost:8000"
+        ""
     )
 
 

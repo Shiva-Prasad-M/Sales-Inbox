@@ -323,7 +323,7 @@ def classify_deterministic(text: str, subject: str, thread_has_task: bool = Fals
     if is_smb and deal_value and deal_value <= 1_000_000:
         return {"decision": "task", "category": "smb_enquiry",
                 "assignee_id": "u_rohit", "priority": "medium",
-                "confidence": 0.9, "reason": "SMB demo/enquiry <= Rs 10L -> Rohit",
+"confidence": 0.9, "reason": "SMB demo/enquiry <= Rs 10L -> Rohit",
                 "deal_value_inr": deal_value}
 
     if is_smb:
@@ -332,15 +332,18 @@ def classify_deterministic(text: str, subject: str, thread_has_task: bool = Fals
                 "confidence": 0.85, "reason": "SMB demo/enquiry -> Rohit",
                 "deal_value_inr": deal_value}
 
-    if is_alliance:
-        return {"decision": "task", "category": "alliances",
-                "assignee_id": "u_karan", "priority": "medium",
-                "confidence": 0.9, "reason": "Channel/alliance -> Karan"}
-
+    # Marketing/PR/events checked BEFORE generic alliances
+    # sponsorship/co-marketing/conference emails route to Meera,
+    # not to Karan via the broad "partnership" keyword.
     if is_marketing:
         return {"decision": "task", "category": "marketing",
                 "assignee_id": "u_meera", "priority": "low",
                 "confidence": 0.9, "reason": "Marketing/webinar/PR -> Meera"}
+
+    if is_alliance:
+        return {"decision": "task", "category": "alliances",
+                "assignee_id": "u_karan", "priority": "medium",
+                "confidence": 0.9, "reason": "Channel/alliance -> Karan"}
 
     if is_finance:
         return {"decision": "task", "category": "finance",

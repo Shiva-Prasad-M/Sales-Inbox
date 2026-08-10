@@ -23,10 +23,11 @@ app = FastAPI(
 )
 
 # CORS
+allowed_origins = [settings.FRONTEND_URL] if settings.FRONTEND_URL else ["*"]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[settings.FRONTEND_URL, "http://localhost:5173", "http://127.0.0.1:5173"],
-    allow_credentials=True,
+    allow_origins=allowed_origins,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -477,15 +478,28 @@ def api_tasks(candidate_id: Optional[str] = Query(None),
 
     tasks = q.order_by(models.Task.created_at.desc()).all()
 
-    # Attach reason from processed email if available
+    # Attach most recent reason from processed emails in a single query.
+    task_ids = [t.task_id for t in tasks]
+    reasons_by_task_id = {}
+    if task_ids:
+        processed_rows = db.query(
+            models.ProcessedEmail.task_id,
+            models.ProcessedEmail.reason,
+            models.ProcessedEmail.id,
+        ).filter(
+            models.ProcessedEmail.task_id.in_(task_ids)
+        ).order_by(
+            models.ProcessedEmail.task_id,
+            models.ProcessedEmail.id.desc(),
+        ).all()
+        for task_id, reason, _ in processed_rows:
+            if task_id not in reasons_by_task_id:
+                reasons_by_task_id[task_id] = reason
+
     results = []
     for t in tasks:
         item = _task_out(t)
-        pe = db.query(models.ProcessedEmail).filter(
-            models.ProcessedEmail.task_id == t.task_id
-        ).order_by(models.ProcessedEmail.id.desc()).first()
-        if pe:
-            item["reason"] = pe.reason
+        item["reason"] = reasons_by_task_id.get(t.task_id)
         results.append(item)
     return {"tasks": results, "count": len(results)}
 

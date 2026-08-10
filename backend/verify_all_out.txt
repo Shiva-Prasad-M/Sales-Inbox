@@ -1,0 +1,43 @@
+Waiting for server...
+Server up.
+  PASS  GET /health 200
+  PASS  DB healthy  {'status': 'healthy', 'database': 'connected'}
+  PASS  RFP ingest 200  200
+  PASS  RFP created  {'processed': 1, 'tasks_created': 1, 'tasks_updated': 0, 'skipped': 0, 'errors': []}
+  PASS  RFP -> u_aarti  u_aarti
+  PASS  RFP category
+  PASS  RFP priority high
+  PASS  RFP deal 25000000  25000000
+  PASS  SMB -> u_rohit  u_rohit
+  PASS  SMB category smb_enquiry
+  PASS  Gov tender -> u_aarti  u_aarti
+  PASS  Gov tender category enterprise_rfp
+  FAIL  Marketing -> u_meera  u_karan
+  FAIL  Marketing category
+  PASS  Invoice -> u_divya  u_divya
+  PASS  Invoice category finance
+  PASS  Channel -> u_karan  u_karan
+  PASS  OOO skipped  {'processed': 1, 'tasks_created': 0, 'tasks_updated': 0, 'skipped': 1, 'errors': []}
+  PASS  Newsletter skipped  {'processed': 1, 'tasks_created': 0, 'tasks_updated': 0, 'skipped': 1, 'errors': []}
+  PASS  SEO spam skipped  {'processed': 1, 'tasks_created': 0, 'tasks_updated': 0, 'skipped': 1, 'errors': []}
+  PASS  Ambiguous -> u_triage  u_triage
+  PASS  Triage low confidence  0.5
+  PASS  Hinglish deal 3 lakh  300000
+  PASS  Urgent high priority  high
+  PASS  Reply no new task  {'processed': 1, 'tasks_created': 0, 'tasks_updated': 1, 'skipped': 0, 'errors': []}
+  PASS  Reply updated  {'processed': 1, 'tasks_created': 0, 'tasks_updated': 1, 'skipped': 0, 'errors': []}
+  FAIL  Same task (no dup)
+  FAIL  Deal updated 3 crore
+  PASS  Idempotency second=0  5->0
+  PASS  Invalid enum 400  400
+  PASS  400 invalid_enum_value  {'detail': {'error': 'invalid_enum_value', 'field': 'assignee_id', 'received': 'u_bad', 'allowed': ['u_aarti', 'u_rohit', 'u_meera', 'u_karan', 'u_divya', 'u_triage']}}
+Traceback (most recent call last):
+  File "c:\Users\SHIVA PRASAD MEDA\OneDrive\Desktop\alumnx-sales-inbox\backend\verify_all.py", line 280, in <module>
+    main()
+  File "c:\Users\SHIVA PRASAD MEDA\OneDrive\Desktop\alumnx-sales-inbox\backend\verify_all.py", line 234, in main
+    t = find_task(e["email_id"])
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\SHIVA PRASAD MEDA\OneDrive\Desktop\alumnx-sales-inbox\backend\verify_all.py", line 108, in find_task
+    return next((x for x in tasks["tasks"] if x["source_email_id"] == eid), None)
+                            ~~~~~^^^^^^^^^
+KeyError: 'tasks'

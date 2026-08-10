@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: alumnx-sales-inbox-backend
+    env: python
+    plan: free
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+    envVars:
+      - key: DATABASE_URL
+        value: ""
+      - key: FRONTEND_URL
+        value: ""
+      - key: GEMINI_API_KEY
+        value: ""
+      - key: CANDIDATE_ID
+        value: ""

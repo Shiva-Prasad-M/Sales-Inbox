@@ -1,0 +1,103 @@
+C:\Users\SHIVA PRASAD MEDA\OneDrive\Desktop\alumnx-sales-inbox\backend\tests\test_end_to_end.py:59: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  "received_at": datetime.utcnow().isoformat(),
+============================================================
+Alumnx Sales Inbox - End to End Test Matrix
+============================================================
+
+[1] Health checks
+  PASS  GET /health -> 200
+  PASS  GET /health/database healthy
+
+[2] Enterprise RFP -> u_aarti
+  PASS  ingest 201/200
+  PASS  1 task created
+  PASS  enterprise RFP exists
+  PASS  assignee u_aarti
+  PASS  category enterprise_rfp
+  PASS  priority high (72h)
+  PASS  deal value parsed
+
+[3] SMB demo -> u_rohit
+  PASS  SMB ingest 200
+  PASS  SMB task created
+  PASS  SMB assignee u_rohit
+  PASS  SMB category smb_enquiry
+
+[4] PSU/government tender below Rs 10L -> u_aarti
+  PASS  gov ingest 200
+  PASS  gov tender -> u_aarti
+  PASS  gov tender category enterprise_rfp
+
+[5] Marketing sponsorship -> u_meera
+  PASS  marketing -> u_meera
+  PASS  marketing category
+
+[6] Invoice/GST -> u_divya
+  PASS  finance -> u_divya
+  PASS  finance category
+
+[7] Reseller/channel -> u_karan
+  FAIL  alliance -> u_karan  u_meera
+
+[8] OOO -> no task
+  PASS  OOO skipped
+  FAIL  OOO no task created  197->199
+
+[9] Newsletter -> no task
+  PASS  newsletter skipped
+
+[10] Vendor SEO spam -> no task
+  PASS  spam skipped
+
+[11] Ambiguous -> u_triage
+  PASS  triage -> u_triage
+  PASS  triage low confidence
+
+[12] Hinglish & crore/lakh
+  PASS  hinglish ingest 200
+  PASS  hinglish deal 3 lakh
+
+[13] Deadline 72h -> high priority
+  PASS  urgent high priority
+
+[14] Thread reply -> PATCH existing task
+  PASS  initial create
+  PASS  initial task exists
+  PASS  reply no new task
+  PASS  reply updated
+  PASS  same task (no duplicate)
+  PASS  deal value updated
+
+[15] Idempotency - same batch twice
+  PASS  second ingest creates 0
+
+[16] Invalid enum -> HTTP 400
+  PASS  invalid enum 400
+  PASS  400 has invalid_enum_value
+
+[17] Null fields when not stated
+  PASS  null due_date
+  PASS  null deal_value
+
+[18] Chat zero-count -> zero
+  PASS  chat zero 200
+  PASS  chat has supporting_data
+  PASS  chat zero answer present
+
+[19] Chat out-of-scope refuses
+  PASS  chat refuses send
+
+[20] Chat structured DB query
+  PASS  chat structured has supporting_data
+
+[21] No API key exposed
+  PASS  no key in /
+  PASS  no key in /api/stats
+  PASS  no key in /api/tasks
+  PASS  no key in /api/chat
+
+============================================================
+RESULTS: 48 passed, 2 failed
+FAILURES:
+  - alliance -> u_karan
+  - OOO no task created

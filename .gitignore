@@ -7,6 +7,13 @@ venv/
 # Environment
 .env
 
+# Backend local secrets
+backend/.env
+
+# Temporary debug helpers created during verification
+backend/tmp_*.py
+backend/verify_out.txt
+backend/test_e2e_run.txt
 # IDE
 .vscode/
 .idea/

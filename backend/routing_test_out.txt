@@ -1,0 +1,4 @@
+PASS marketing: got u_meera expected u_meera cat=marketing
+PASS channel: got u_karan expected u_karan cat=alliances
+PASS rfp: got u_aarti expected u_aarti cat=enterprise_rfp
+ALL_OK

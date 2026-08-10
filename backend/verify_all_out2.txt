@@ -1,0 +1,16 @@
+Waiting for server...
+Server up.
+  PASS  GET /health 200
+  PASS  DB healthy  {'status': 'healthy', 'database': 'connected'}
+  PASS  RFP ingest 200  200
+  PASS  RFP created  {'processed': 1, 'tasks_created': 1, 'tasks_updated': 0, 'skipped': 0, 'errors': []}
+Traceback (most recent call last):
+  File "c:\Users\SHIVA PRASAD MEDA\OneDrive\Desktop\alumnx-sales-inbox\backend\verify_all.py", line 280, in <module>
+    main()
+  File "c:\Users\SHIVA PRASAD MEDA\OneDrive\Desktop\alumnx-sales-inbox\backend\verify_all.py", line 116, in main
+    t = find_task(e["email_id"])
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\SHIVA PRASAD MEDA\OneDrive\Desktop\alumnx-sales-inbox\backend\verify_all.py", line 108, in find_task
+    return next((x for x in tasks["tasks"] if x["source_email_id"] == eid), None)
+                            ~~~~~^^^^^^^^^
+KeyError: 'tasks'

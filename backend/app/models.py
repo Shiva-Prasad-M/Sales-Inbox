@@ -69,7 +69,7 @@ class ProcessedEmail(Base):
     reason = Column(Text, nullable=True)
     skip_reason = Column(String(50), nullable=True)
     spurious = Column(Boolean, default=False, nullable=False)
-    task_id = Column(String(50), nullable=True)
+    task_id = Column(String(50), nullable=True, index=True)
     title = Column(String(500), nullable=True)
     deal_value_inr = Column(Integer, nullable=True)
     due_date = Column(String(10), nullable=True)

@@ -1,0 +1,28 @@
+=== CORS OPTIONS /users ===
+200
+None
+None
+---
+=== Create thread task ===
+CREATE TASK INGEST 200
+{"processed":1,"tasks_created":0,"tasks_updated":0,"skipped":1,"errors":[]}
+---
+=== Idempotent ingest same email ===
+IDEMPOTENT INGEST 200
+{"processed":1,"tasks_created":0,"tasks_updated":0,"skipped":1,"errors":[]}
+---
+=== Reply ingest same thread ===
+REPLY INGEST 200
+{"processed":1,"tasks_created":0,"tasks_updated":0,"skipped":0,"errors":[]}
+---
+=== GET api/tasks candidate consistency ===
+200
+{"tasks":[{"task_id":"T-477F8A5A","candidate_id":"me@example.com","source_email_id":"e-thread-1","thread_id":"t-thread-1","title":"Re: Invoice due now","description":"Need to update the due date to next week.","assignee_id":"u_divya","category":"finance","priority":"medium","due_date":"2026-08-11","deal_value_inr":null,"company_name":null,"confidence":0.9,"created_at":"2026-08-10T03:01:45.287976+00:00","updated_at":"2026-08-10T03:01:52.761627+00:00","reason":"Thread reply -> PATCH"},{"task_id":"T-5206B9CE","candidate_id":"me@example.com","source_email_id":"e-test-1","thread_id":"t-test","title":"Test request","description":"Please send proposal","assignee_id":"u_meera","category":"marketing","priority":"low","due_date":null,"deal_value_inr":null,"company_name":null,"confidence":0.9,"create
+---
+=== GET /tasks candidate consistency ===
+200
+[{"task_id":"T-477F8A5A","candidate_id":"me@example.com","source_email_id":"e-thread-1","thread_id":"t-thread-1","title":"Re: Invoice due now","description":"Need to update the due date to next week.","assignee_id":"u_divya","category":"finance","priority":"medium","due_date":"2026-08-11","deal_value_inr":null,"company_name":null,"confidence":0.9,"created_at":"2026-08-10T03:01:45.287976+00:00","updated_at":"2026-08-10T03:01:52.761627+00:00"},{"task_id":"T-5206B9CE","candidate_id":"me@example.com","source_email_id":"e-test-1","thread_id":"t-test","title":"Test request","description":"Please send proposal","assignee_id":"u_meera","category":"marketing","priority":"low","due_date":null,"deal_value_inr":null,"company_name":null,"confidence":0.9,"created_at":"2026-08-10T02:53:28.852604+00:00","
+---
+=== CHAT out-of-scope answer ===
+200
+{"answer":"This interface is read-only and cannot send emails. Please use your email client to send it manually.","supporting_data":{"action":"unsupported"}}
